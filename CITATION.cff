@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "agentcheck"
+abstract: "One plain-English page about how safe a repo is to hand to a coding agent. It runs leash, skillgate and mandata and puts what they find in one list."
+type: software
+authors:
+  - family-names: "Kusch"
+    given-names: "Patricia"
+repository-code: "https://github.com/patkusch/agentcheck"
+license: MIT
