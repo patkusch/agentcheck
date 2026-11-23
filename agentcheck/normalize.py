@@ -64,3 +64,20 @@ def skillgate(data, root):
             items.append(Item("skillgate", tier, where, title, SKILLGATE_FIX if tier == FIX else ""))
     parts = [f"{n} {word}" for word, n in (("blocked", verdicts["block"]), ("need review", verdicts["review"]), ("fine", verdicts["ok"])) if n]
     return items, f"checked {_plural(len(skills), 'skill')}" + (": " + ", ".join(parts) if parts else "")
+
+
+def mandata(data, root):
+    """mandata prints {"files", "errors", "warnings", "findings": [{"level", "file", "line", "said", "message"}]}."""
+    items = []
+    for f in data.get("findings", []):
+        tier = FIX if f.get("level") == "error" else CHECK
+        where = f"{f.get('file', '')}:{f['line']}" if f.get("line") else f.get("file", "")
+        items.append(Item("mandata", tier, where, f"{f.get('said', '')}: {f.get('message', '')}"))
+    files = data.get("files", [])
+    if not files:
+        return items, "found no instruction files (CLAUDE.md, AGENTS.md and the like)"
+    wrong = sum(1 for i in items if i.tier == FIX)
+    stale = sum(1 for i in items if i.tier == CHECK)
+    if not items:
+        return items, f"read {_plural(len(files), 'instruction file')}, everything it could test is still true"
+    return items, f"read {_plural(len(files), 'instruction file')}: {wrong} wrong now, {stale} probably stale"
