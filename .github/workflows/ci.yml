@@ -40,3 +40,5 @@ jobs:
           ! python -m agentcheck examples/risky
       - name: Leaving a tool out of a run
         run: python -m agentcheck examples/healthy --skip leash
+      - name: mandata checks this repo's own instruction file
+        run: mandata . --exclude examples
