@@ -46,11 +46,13 @@ def text(report, show_notes=False) -> str:
             lines += ["", f"{_plural(len(items), 'note')} not shown. Add --all to see {'it' if len(items) == 1 else 'them'}."]
             continue
         lines += ["", f"{HEADINGS[tier]} ({len(items)})"]
+        first_with = {}
         for n, item in enumerate(items, 1):
             lines.append(f"  {n}. [{item.tool}] {item.where}")
             lines.append(f"     {item.title}")
             if item.fix:
-                lines.append(f"     To fix: {item.fix}")
+                earlier = first_with.setdefault(item.fix, n)
+                lines.append(f"     To fix: {item.fix}" if earlier == n else f"     To fix: same as {earlier}.")
     lines += ["", "WHAT EACH TOOL SAW"]
     width = max(len(r.name) for r in report.runs)
     for r in report.runs:

@@ -72,3 +72,19 @@ class Json(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Repeats(unittest.TestCase):
+    def test_advice_that_repeats_word_for_word_is_given_once_and_then_pointed_back_to(self):
+        same = "Read this line."
+        run = ToolRun("skillgate", model.OK, "0.1.0", [Item("skillgate", FIX, f"a:{n}", f"problem {n}", same) for n in (1, 2, 3)], "checked 1 skill")
+        out = page.text(build(run))
+        self.assertEqual(out.count("To fix: Read this line."), 1)
+        self.assertEqual(out.count("To fix: same as 1."), 2)
+
+    def test_different_advice_is_never_merged_and_numbering_restarts_in_each_tier(self):
+        run = ToolRun("leash", model.OK, "1", [Item("leash", FIX, "a", "x", "do A"), Item("leash", FIX, "b", "y", "do B"), Item("leash", CHECK, "c", "z", "do A")], "s")
+        out = page.text(build(run))
+        self.assertIn("To fix: do A", out)
+        self.assertIn("To fix: do B", out)
+        self.assertNotIn("same as", out, "the same words in a different tier are not a repeat")
