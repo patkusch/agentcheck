@@ -38,3 +38,29 @@ def leash(data, root):
     else:
         text = f"read {_plural(checked, 'permission file')}" + (f": {counts}" if counts else ", nothing serious")
     return items, text
+
+
+SKILLGATE_TIER = {"high": FIX, "medium": CHECK, "low": NOTE}
+SKILLGATE_FIX = "Read this line. Do not let an agent use the skill until you are sure it is meant to be there."
+
+
+def skillgate(data, root):
+    """skillgate prints a list of {"skill", "path", "verdict", "findings": [{"severity", "file", "line", "message", "snippet"}]}."""
+    items = []
+    skills = data if isinstance(data, list) else []
+    verdicts = {"ok": 0, "review": 0, "block": 0}
+    for skill in skills:
+        verdicts[skill.get("verdict")] = verdicts.get(skill.get("verdict"), 0) + 1
+        folder = _relative(skill.get("path"), root)
+        for f in skill.get("findings", []):
+            tier = SKILLGATE_TIER.get(f.get("severity"), NOTE)
+            where = f"{folder}/{f.get('file', '')}".replace("//", "/").strip("/")
+            if f.get("line"):
+                where += f":{f['line']}"
+            title = f"skill \"{skill.get('skill', folder)}\": {f.get('message', '')}"
+            snippet = (f.get("snippet") or "").strip()
+            if snippet:
+                title += f" ({snippet[:70]!r})"
+            items.append(Item("skillgate", tier, where, title, SKILLGATE_FIX if tier == FIX else ""))
+    parts = [f"{n} {word}" for word, n in (("blocked", verdicts["block"]), ("need review", verdicts["review"]), ("fine", verdicts["ok"])) if n]
+    return items, f"checked {_plural(len(skills), 'skill')}" + (": " + ", ".join(parts) if parts else "")
