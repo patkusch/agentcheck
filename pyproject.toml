@@ -1,0 +1,34 @@
+[project]
+name = "agentcheck"
+version = "0.1.0"
+description = "One plain-English page about how safe a repo is to hand to a coding agent. Runs leash, skillgate and mandata and puts what they find in one list."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "Patricia Kusch" }]
+keywords = ["ai-agents", "claude-code", "security", "audit", "cli"]
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/patkusch/agentcheck"
+Repository = "https://github.com/patkusch/agentcheck"
+Issues = "https://github.com/patkusch/agentcheck/issues"
+Changelog = "https://github.com/patkusch/agentcheck/blob/main/CHANGELOG.md"
+
+[project.scripts]
+agentcheck = "agentcheck.cli:main"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["agentcheck"]
